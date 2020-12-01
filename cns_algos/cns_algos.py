@@ -3,7 +3,10 @@ import math
 from sympy import Matrix
 from des import DesKey
 import aes, os
-
+import hashlib
+from Crypto.PublicKey import DSA
+from Crypto.Signature import DSS
+from Crypto.Hash import SHA256
 
 class CNS_ALGO():
 
@@ -420,4 +423,153 @@ class CNS_ALGO():
 
             print("Plain Text:", plain.decode('utf-8'))
 
-        def 
+        def aes_algo(self, url:str):
+            key = os.urandom(16)
+            iv = os.urandom(16)
+
+            encrypted = aes.AES(key).encrypt_ctr(bytes(url, 'utf-8'), iv)
+            print("Encrypted URL:", encrypted)
+            plain = aes.AES(key).decrypt_ctr(encrypted, iv)
+            print("Decrypted URL:", str(plain, 'utf-8'))
+
+        def rsa(self):
+            html = '''
+            <html>
+
+            <head>
+                <title>RSA Encryption</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            </head>
+
+            <body>
+                <center>
+                    <h1>RSA Algorithm</h1>
+                    <h2>Implemented Using HTML & Javascript</h2>
+                    <hr>
+                    <table>
+                        <tr>
+                            <td>Enter First Prime Number:</td>
+                            <td><input type="number" value="53" id="p"></td>
+                        </tr>
+                        <tr>
+                            <td>Enter Second Prime Number:</td>
+                            <td><input type="number" value="59" id="q"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Enter the Message(cipher text):<br>[A=1, B=2,...]</td>
+                            <td><input type="number" value="89" id="msg"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Public Key:</td>
+                            <td>
+                                <p id="publickey"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Exponent:</td>
+                            <td>
+                                <p id="exponent"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Private Key:</td>
+                            <td>
+                                <p id="privatekey"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cipher Text:</td>
+                            <td>
+                                <p id="ciphertext"></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><button onclick="RSA();">Apply RSA</button></td>
+                        </tr>
+                    </table>
+                </center>
+            </body>
+            <script type="text/javascript">
+                function RSA() {
+                    var gcd, p, q, no, n, t, e, i, x;
+                    gcd = function (a, b) { return (!b) ? a : gcd(b, a % b); };
+                    p = document.getElementById('p').value;
+                    q = document.getElementById('q').value;
+                    no = document.getElementById('msg').value;
+                    n = p * q;
+                    t = (p - 1) * (q - 1);
+
+                    for (e = 2; e < t; e++) {
+                        if (gcd(e, t) == 1) {
+                            break;
+                        }
+                    }
+
+                    for (i = 0; i < 10; i++) {
+                        x = 1 + i * t
+                        if (x % e == 0) {
+                            d = x / e;
+                            break;
+                        }
+                    }
+
+                    ctt = Math.pow(no, e).toFixed(0);
+                    ct = ctt % n;
+
+                    dtt = Math.pow(ct, d).toFixed(0);
+                    dt = dtt % n;
+
+                    document.getElementById('publickey').innerHTML = n;
+                    document.getElementById('exponent').innerHTML = e;
+                    document.getElementById('privatekey').innerHTML = d;
+                    document.getElementById('ciphertext').innerHTML = ct;
+                }
+            </script>
+            </html>
+            '''
+            file = open("rsa.html","w")
+            file.write(html)
+            file.close()
+            print("File is written successfully")
+
+        def diffie_hellman(self, p:int, q:int):
+            print('The Value of P is :%d'%(p))
+            print('The Value of G is :%d'%(q))
+            
+            a = int(input("Enter Alice Private Key:")) #Alice Private key
+            b = int(input("Enter Bob Private Key:")) #Bob Private Key
+            
+            x = int(pow(q, a, p))
+            
+            y = int(pow(g, b, p)) 
+            print('The Private Key a for Alice is :%d'%(a))
+            
+            ka = int(pow(y, a, p)) 
+            
+            
+            print('The Private Key b for Bob is :%d'%(b))
+            
+            kb = int(pow(x,b,p))
+            
+            if ka == kb:
+                print("Secret key is correct, it is", ka)
+
+            else:
+                print("Secret key is incorrect")
+
+        def sha1_algo(self, text:str):
+            result = hashlib.sha1(text.encode()) 
+ 
+            print("The hexadecimal equivalent in SHA1 is : ") 
+            print(result.hexdigest())
+
+        def dss_algo(self, text:str):
+            key = DSA.generate(2048)
+
+            hash_obj = SHA256.new(text.encode("utf-8"))
+            signer = DSS.new(key, 'fips-186-3')
+            signature = signer.sign(hash_obj)
+
+            print("Digital Signature:", signature)
