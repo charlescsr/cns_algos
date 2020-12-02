@@ -1,1 +1,1 @@
-from cns_algos import *
+from .cns_algos import *
