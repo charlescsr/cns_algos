@@ -15,3 +15,5 @@ Algorithms for Cryptography in Python
 10. Diffie-Hellman Key Exchange
 11. SHA1
 12. DSS
+
+**Archived currently**
